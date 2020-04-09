@@ -1,0 +1,80 @@
+apply plugin: "java"
+apply plugin: "maven"
+apply plugin: "idea"
+
+ext {
+    artifact = 'es-sg-extended-auth-plugin'
+    releaseVersion = '1.0.0.SNAPSHOT'
+}
+
+jar {
+    baseName = "es-sg-extended-auth-plugin"
+    version = releaseVersion
+}
+
+task makePretty(type: Delete) {
+    delete "repo"
+}
+clean.dependsOn makePretty
+
+tasks.withType(Jar) {
+    destinationDir = file("$rootDir/repo")
+}
+
+task createPom << {
+    pom {
+        project {
+            groupId 'my.plugin'
+            artifactId artifact
+            version releaseVersion
+            inceptionYear '2016'
+        }
+    }.writeTo("$rootDir/repo/${artifact}-${releaseVersion}.pom")
+}
+build.dependsOn createPom
+
+
+description = "es-sg-extended-auth-plugin"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+buildscript {
+    repositories {
+        //mavenCentral()
+        maven {
+            url "https://artifactory.mytest.net/artifactory/repo"
+        }
+    }
+}
+
+repositories {
+    //mavenCentral()
+    maven {
+        url "https://artifactory.mytest.net/artifactory/repo"
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
+
+System.setProperty("org.gradle.color.failure", "RED")
+System.setProperty("org.gradle.color.progressstatus", "YELLOW")
+System.setProperty("org.gradle.color.success", "GREEN")
+
+dependencies {
+    ext {
+        esVersion = "1.7.3"
+        sgVersion = "1.7.3.0"
+        jestVersion = "0.1.4"
+        junitVersion = "4.11"
+        slf4jVersion = "1.7.7"
+        fluentVersion = "4.3.4"
+    }
+    compile "org.elasticsearch:elasticsearch:${esVersion}"
+    compile "com.floragunn:search-guard:${sgVersion}"
+    testCompile "junit:junit:${junitVersion}"
+    testCompile "io.searchbox:jest:${jestVersion}"
+    testCompile "org.slf4j:slf4j-log4j12:${slf4jVersion}"
+    testCompile "org.apache.httpcomponents:fluent-hc:${fluentVersion}"
+}

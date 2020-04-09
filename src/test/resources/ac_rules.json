@@ -1,0 +1,30 @@
+{"acl": [
+   {
+      "__Comment__": "By default no filters are executed and no filters a by-passed. In such a case a exception is throws an access will be denied.",
+      "filters_bypass": [],
+      "filters_execute": []
+   },
+   {
+      "__Comment__": "For admin role all filters are bypassed (so none will be executed) for all indices. This means unrestricted access at all for this role.",
+      "roles": [
+         "admin"
+      ],
+      "indices": ["*"],
+      "filters_bypass": ["*"],
+      "filters_execute": []
+   },
+   {
+      "__Comment__": "This means any user with the role dba can do anything with the index",
+      "roles" : ["dba"],
+      "indices": ["*"],
+      "filters_bypass": [],
+      "filters_execute": ["actionrequestfilter.dba_filter"]
+   },
+   {
+      "__Comment__": "This means any user with the role readonly can do only read operations with the index",
+      "roles" : ["readonly"],
+      "indices": ["*"],
+      "filters_bypass": [],
+      "filters_execute": ["actionrequestfilter.readonly_filter"]
+   }
+]}
